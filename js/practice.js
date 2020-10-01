@@ -23,6 +23,7 @@
             values: {
                 videoImageCount: 300,
                 imageSequence: [0, 299],
+                canvas_opacity: [1, 0, { start: 0.9, end: 1 }],
                 messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
                 messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
                 messageC_opacity_in: [0, 1, { start: 0.5, end: 0.6 }],
@@ -61,9 +62,16 @@
                 messageB: document.querySelector('#scroll-section-2 .b'),
                 messageC: document.querySelector('#scroll-section-2 .c'),
                 pinB: document.querySelector('#scroll-section-2 .b .pin'),
-                pinC: document.querySelector('#scroll-section-2 .c .pin')
+                pinC: document.querySelector('#scroll-section-2 .c .pin'),
+                canvas: document.querySelector('#video-canvas-1'),
+                context: document.querySelector('#video-canvas-1').getContext('2d'),
+                videoImages: [],
             },
             values: {
+                videoImageCount: 960,
+                imageSequence: [0, 959],
+				canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
+				canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }],
                 messageA_translateY_in: [20, 0, { start: 0.15, end: 0.2 }],
                 messageB_translateY_in: [30, 0, { start: 0.6, end: 0.65 }],
                 messageC_translateY_in: [30, 0, { start: 0.87, end: 0.92 }],
@@ -77,7 +85,11 @@
                 messageB_opacity_out: [1, 0, { start: 0.68, end: 0.73 }],
                 messageC_opacity_out: [1, 0, { start: 0.95, end: 1 }],
                 pinB_scaleY: [0.5, 1, { start: 0.6, end: 0.65 }],
-                pinC_scaleY: [0.5, 1, { start: 0.87, end: 0.92 }]
+                pinC_scaleY: [0.5, 1, { start: 0.87, end: 0.92 }],
+                pinB_opacity_in: [0, 1, { start: 0.6, end: 0.65 }],
+                pinC_opacity_in: [0, 1, { start: 0.87, end: 0.92 }],
+                pinB_opacity_out: [1, 0, { start: 0.68, end: 0.73 }],
+                pinC_opacity_out: [1, 0, { start: 0.95, end: 1 }],
             }
         },
         {
@@ -101,6 +113,12 @@
             imgElem = new Image();
             imgElem.src = `./video/001/IMG_${6726 + i}.JPG`;
             sceneInfo[0].objs.videoImages.push(imgElem);
+        }
+
+        for (let i = 0; i < sceneInfo[2].values.videoImageCount; i++) {
+            imgElem = new Image();
+            imgElem.src = `./video/002/IMG_${7027 + i}.JPG`;
+            sceneInfo[2].objs.videoImages.push(imgElem);
         }
     }
     setCanvasImages();
@@ -130,6 +148,7 @@
 
         const heightRatio = window.innerHeight / 1080;
         sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`;
+        sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`;
     }
 
     function calcValues(values, currentYOffset) {
@@ -169,6 +188,7 @@
             case 0:
                 let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
                 objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+                objs.canvas.style.opacity = calcValues(values.canvas_opacity, currentYOffset);
 
                 if (scrollRatio <= 0.22) {
                     // in
@@ -214,6 +234,16 @@
             case 1:
                 break;
             case 2:
+                let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
+                objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
+
+                if (scrollRatio <= 0.5) {
+                    console.log(calcValues(values.canvas_opacity_in, currentYOffset));
+                    objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYOffset);
+                } else {
+                    objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYOffset);
+                }
+
                 if (scrollRatio <= 0.32) {
                     // in
                     objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYOffset);
@@ -283,6 +313,9 @@
         scrollLoop();
     });
     // window.addEventListener('DOMContentLoaded', setLayout);
-    window.addEventListener('load', setLayout);
+    window.addEventListener('load', () => {
+        setLayout();
+        sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+    });
     window.addEventListener('resize', setLayout);
 })();
