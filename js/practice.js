@@ -50,7 +50,7 @@
         {
             // 1
             type: 'normal',
-            heightNum: 5,
+            // heightNum: 5, // type normal에서는 필요 없음
             scrollHeight: 0,
             objs: {
                 container: document.querySelector('#scroll-section-1'),
@@ -517,10 +517,24 @@
     
     // window.addEventListener('DOMContentLoaded', setLayout);
     window.addEventListener('load', () => {
+
         document.body.classList.remove('before-load');
         // document.body.removeChild(document.querySelector('.loading'));
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+
+        let tempYOffset = yOffset;
+        let tempScrollCount = 0;
+        if (yOffset > 0) {
+            let siId = setInterval(() => {
+                window.scrollTo(0, tempYOffset);
+                tempYOffset += 2;
+                if (tempScrollCount > 10) {
+                    clearInterval(siId);
+                }
+                tempScrollCount++;
+            }, 20);
+        }
 
         window.addEventListener('scroll', () => {
             yOffset = window.pageYOffset; // 스크롤 Y 수치
@@ -535,12 +549,16 @@
 
         window.addEventListener('resize',  () => {
             if (window.innerWidth > 900) {
-                setLayout();
+                window.location.reload();
             }
-            sceneInfo[3].values.rectStartY = 0;
         });
 
-        window.addEventListener('orientationchange', setLayout);
+        window.addEventListener('orientationchange', () => {
+            scrollTo(0, 0);
+            setTimeout(() => {
+                window.location.reload();
+            }, 200);
+        });
 
         document.querySelector('.loading').addEventListener('transitionend', (e) => {
             document.body.removeChild(e.currentTarget);
