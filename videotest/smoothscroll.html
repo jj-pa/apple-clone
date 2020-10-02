@@ -43,6 +43,7 @@
 
 			rafId = requestAnimationFrame(loop);
 
+			// 음수가 발생할 수 있음.
 			if (Math.abs(pageYOffset - delayedYOffset) < 1) {
 				cancelAnimationFrame(rafId);
 				rafState = false;
