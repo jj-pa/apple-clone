@@ -526,7 +526,7 @@
     
     // window.addEventListener('DOMContentLoaded', setLayout);
     window.addEventListener('load', () => {
-
+        setLayout(); // 하단 추가 콘텐츠 양에 따라 컨테이너 높이 계산 오차 발생으로 중복 실행 처리
         document.body.classList.remove('before-load');
         // document.body.removeChild(document.querySelector('.loading'));
         setLayout();
