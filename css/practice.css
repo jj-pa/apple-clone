@@ -181,6 +181,9 @@ body.before-load {
     top: 50%;
     left: 50%;
 }
+.scroll-effect-end .sticky-elem {
+    display: none !important;
+}
 #show-scene-0 #scroll-section-0 .sticky-elem,
 #show-scene-1 #scroll-section-1 .sticky-elem,
 #show-scene-2 #scroll-section-2 .sticky-elem,
@@ -240,6 +243,9 @@ body.before-load {
     fill: transparent;
     animation: loading-circle-ani 1s infinite;
     -webkit-animation: loading-circle-ani 1s infinite;
+}
+.normal-content {
+    margin-bottom: 10rem;
 }
 
 @media (min-width: 1024px) {
