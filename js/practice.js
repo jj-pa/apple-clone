@@ -3,7 +3,6 @@
     let prevScrollHeight = 0; // 현재 스크롤 위치(yOffset)보다 이전에 위치한 스크롤 섹션들의 높이값의 합
     let currentScene = 0; // 현재 활성화된(눈 앞에 보고있는) 씬(scroll-section)
     let enterNewScene = false; // 새로운 scene의 시작된 순간 true
-
     // 비디오 감속 처리
     let acc = 0.1;
     let delayedYOffset = 0;
@@ -148,7 +147,6 @@
             sceneInfo[3].objs.images.push(imgElem3);
         }
     }
-    setCanvasImages();
 
     function checkMenu() {
         if (yOffset > 44) {
@@ -516,20 +514,38 @@
         }
     }
 
-    window.addEventListener('scroll', () => {
-        yOffset = window.pageYOffset; // 스크롤 Y 수치
-        scrollLoop();
-        checkMenu();
-
-        if (!rafState) {
-            rafId = requestAnimationFrame(loop);
-            rafState = true;
-        }
-    });
+    
     // window.addEventListener('DOMContentLoaded', setLayout);
     window.addEventListener('load', () => {
+        document.body.classList.remove('before-load');
+        // document.body.removeChild(document.querySelector('.loading'));
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+
+        window.addEventListener('scroll', () => {
+            yOffset = window.pageYOffset; // 스크롤 Y 수치
+            scrollLoop();
+            checkMenu();
+    
+            if (!rafState) {
+                rafId = requestAnimationFrame(loop);
+                rafState = true;
+            }
+        });
+
+        window.addEventListener('resize',  () => {
+            if (window.innerWidth > 900) {
+                setLayout();
+            }
+            sceneInfo[3].values.rectStartY = 0;
+        });
+
+        window.addEventListener('orientationchange', setLayout);
+
+        document.querySelector('.loading').addEventListener('transitionend', (e) => {
+            document.body.removeChild(e.currentTarget);
+        });
     });
-    window.addEventListener('resize', setLayout);
+
+    setCanvasImages();
 })();
